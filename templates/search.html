@@ -1,0 +1,65 @@
+{% from 'bootstrap4/form.html' import render_form %}
+{% set page_title = 'Search' %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+{% block body %}
+<style>
+    body {
+        margin: 0px;
+    }
+    div#loading {
+        position: fixed;
+        display: none;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        text-align: center;
+        background-color: rgba(255, 255, 255, 0.8);
+        z-index: 2;
+    }
+    .spinner-block {
+        position: absolute;
+        top: 50%;
+        width: 100%;
+        transform: translateY(-50%);
+    }
+    .spinner-border {
+        display: inline-block;
+        width: 2rem;
+        height: 2rem;
+        vertical-align: -0.125em;
+        border: 0.25em solid currentColor;
+        border-right-color: transparent;
+        border-radius: 50%;
+        -webkit-animation: .75s linear infinite spinner-border;
+        animation: .75s linear infinite spinner-border;
+        color: #0d6efd;
+    }
+</style>
+    <div id="loading">
+        <div class="spinner-block">
+            <div class="spinner-border" role="status"></div>
+        </div>
+    </div>
+    <div style="position: absolute;top: 50%;width: 100%;transform: translateY(-50%);">
+        <div style="text-align: center; margin-left: auto; margin-right: auto;width: 80%;">
+            {{ render_form(form, action=url_for('home'), id="submit_form", method="POST") }}
+            <a href="apps/list">Generated Websites</a><br/>
+            <a href="images/list">Generated Images</a>
+        </div>
+    </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript">// <![CDATA[
+    $("#submit").click(function (e) {
+        document.getElementById('submit_form').action = '/';
+        if ($("#search")[0].value)
+            $("#loading").show();
+    });
+    $("#create_img").click(function (e) {
+        document.getElementById('submit_form').action = '/func/create_img';
+        if ($("#search")[0].value)
+            $("#loading").show();
+    });
+// ]]></script>
+{% endblock %}

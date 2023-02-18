@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Greedy Snake Game</title>
+	<style type="text/css">body {
+        margin: 0;
+        padding: 0;
+        background-color: #000;
+    }
+    canvas {
+        display: block;
+        margin: 0 auto;
+        background-color: #222;
+    }
+	</style>
+</head>
+<body>
+<p><canvas height="320" id="gameCanvas" width="480"></canvas> <script>
+// canvas and context
+var canvas, ctx;
+
+// snake
+var snake;
+
+// snake direction
+var direction;
+
+// food object
+var food;
+
+// score
+var score;
+
+// game over
+var gameOver;
+
+// initialize the game
+function init() {
+    // get the canvas and context
+    canvas = document.getElementById("gameCanvas");
+    ctx = canvas.getContext("2d");
+
+    // initialize snake
+    createSnake();
+
+    // set initial direction
+    direction = "right";
+
+    // create food
+    createFood();
+
+    // set initial score
+    score = 0;
+
+    // game is not over
+    gameOver = false;
+
+    // start the game loop
+    gameLoop();
+}
+
+// create the snake
+function createSnake() {
+    // start length is 5
+    var length = 5;
+
+    // starting snake array
+    snake = [];
+
+    // add 5 elements to the array
+    for (var i = length-1; i >= 0; i--) {
+        // add an object to the array
+        snake.push({
+            x: i,
+            y: 0
+        });
+    }
+}
+
+// create food
+function createFood() {
+    // generate random numbers
+    food = {
+        x: Math.round(Math.random() * (canvas.width - 10) / 10),
+        y: Math.round(Math.random() * (canvas.height - 10) / 10)
+    };
+}
+
+// game loop
+function gameLoop() {
+    // if game is not over
+    if (!gameOver) {
+        // clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // draw snake
+        drawSnake();
+
+        // draw food
+        drawFood();
+
+        // move snake
+        moveSnake();
+
+        // draw score
+        drawScore();
+
+        // call game loop
+        setTimeout(gameLoop, 100);
+    }
+}
+
+// draw the snake
+function drawSnake() {
+    // loop through the snake array
+    for (var i = 0; i < snake.length; i++) {
+        // set color
+        ctx.fillStyle = (i == 0) ? "#0f0" : "#fff";
+
+        // draw snake
+        ctx.fillRect(snake[i].x * 10, snake[i].y * 10, 10, 10);
+    }
+}
+
+// draw food
+function drawFood() {
+    // set color
+    ctx.fillStyle = "#f00";
+
+    // draw food
+    ctx.fillRect(food.x * 10, food.y * 10, 10, 10);
+}
+
+// move snake
+function moveSnake() {
+    // get the snake's head
+    var headX = snake[0].x;
+    var headY = snake[0].y;
+
+    // switch case for direction
+    switch (direction) {
+        case "right":
+            headX++;
+            break;
+        case "left":
+            headX--;
+            break;
+        case "up":
+            headY--;
+            break;
+        case "down":
+            headY++;
+            break;
+    }
+
+    // check if snake has eaten food
+    if (headX == food.x && headY == food.y) {
+        // increase score
+        score++;
+
+        // create new food
+        createFood();
+    } else {
+        // remove the last element from the snake array
+        snake.pop();
+    }
+
+    // create new head
+    var newHead = {
+        x: headX,
+        y: headY
+    };
+
+    // check if game over
+    if (headX < 0 || headX > canvas.width/10 || headY < 0 || headY > canvas.height/10 || checkCollision(newHead)) {
+        gameOver = true;
+        return;
+    }
+
+    // add new head to the beginning of the snake array
+    snake.unshift(newHead);
+}
+
+// draw score
+function drawScore() {
+    // set color
+    ctx.fillStyle = "#fff";
+
+    // draw score
+    ctx.fillText("Score: " + score, 5, canvas.height - 5);
+}
+
+// check collision
+function checkCollision(head) {
+    for (var i = 0; i < snake.length; i++) {
+        if (head.x == snake[i].x && head.y == snake[i].y) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// control the snake
+document.onkeydown = function(e) {
+    switch (e.keyCode) {
+        case 37:
+            if (direction != "right") {
+                direction = "left";
+            }
+            break;
+        case 38:
+            if (direction != "down") {
+                direction = "up";
+            }
+            break;
+        case 39:
+            if (direction != "left") {
+                direction = "right";
+            }
+            break;
+        case 40:
+            if (direction != "up") {
+                direction = "down";
+            }
+            break;
+    }
+};
+
+// start the game
+init();
+</script></p>
+</body>
+</html>

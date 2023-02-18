@@ -1,0 +1,11 @@
+openai
+heroku
+flask
+gunicorn
+wtforms
+Flask-WTF
+Bootstrap-Flask
+waitress
+wheel
+python-dotenv
+Flask-CKEditor

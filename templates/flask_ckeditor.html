@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flask-CKEditor Demo</title>
+</head>
+<body>
+	<div class="warpper" style="width: 700px; margin: auto">
+		<h1>Code Editor</h1>
+		<form method="post">
+			{{ form.csrf_token }}
+			<label for="title">Title</label><br>
+			<input type="text" name="title" value="{{ form.title.data }}"><br><br>
+			<label for="body">Body</label>
+			{{ ckeditor.create(value=form.body.data|safe, name="body") }}<br>
+			<input type="submit" value="Submit">
+		</form>
+	</div>
+	{{ ckeditor.load() }}
+<script type="text/javascript">// <![CDATA[
+	CKEDITOR.replace( 'body', {
+		fullPage: true,
+		allowedContent: true,
+		height: 400
+	});
+// ]]></script>
+</body>
+</html>

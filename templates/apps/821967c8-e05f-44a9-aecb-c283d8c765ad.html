@@ -1,0 +1,138 @@
+<html>
+<head>
+	<title>Greedy Snake Game</title>
+	<style type="text/css">body {
+        background-color: #000000;
+    }
+    #canvas {
+        background-color: #FFFF00;
+    }
+	</style>
+</head>
+<body>
+<h1>Greedy Snake Game</h1>
+
+<p><canvas height="500" id="canvas" width="500"></canvas> <script>
+    // Define the canvas
+    var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext("2d");
+
+    // Define the snake
+    var snakeSize = 10;
+    var snake;
+    var snakeLength;
+
+    // Define the food
+    var food;
+
+    // Create the snake
+    function createSnake() {
+        var length = 5;
+        snake = [];
+        for (var i = length - 1; i >= 0; i--) {
+            snake.push({
+                x: i,
+                y: 0
+            });
+        }
+    }
+
+    // Create the food
+    function createFood() {
+        food = {
+            x: Math.round(Math.random() * (canvas.width - snakeSize) / snakeSize),
+            y: Math.round(Math.random() * (canvas.height - snakeSize) / snakeSize)
+        };
+    }
+
+    // Draw the snake and the food
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (var i = 0; i < snake.length; i++) {
+            ctx.fillStyle = (i == 0) ? "green" : "white";
+            ctx.fillRect(snake[i].x * snakeSize, snake[i].y * snakeSize, snakeSize, snakeSize);
+
+            ctx.strokeStyle = "red";
+            ctx.strokeRect(snake[i].x * snakeSize, snake[i].y * snakeSize, snakeSize, snakeSize);
+        }
+
+        ctx.fillStyle = "yellow";
+        ctx.fillRect(food.x * snakeSize, food.y * snakeSize, snakeSize, snakeSize);
+    }
+
+    // Move the snake
+    function moveSnake() {
+        var headX = snake[0].x;
+        var headY = snake[0].y;
+
+        // Move the head of the snake
+        document.onkeydown = function (e) {
+            var key = e.keyCode;
+            if (key == 37 && direction != "right") direction = "left";
+            else if (key == 38 && direction != "down") direction = "up";
+            else if (key == 39 && direction != "left") direction = "right";
+            else if (key == 40 && direction != "up") direction = "down";
+        }
+
+        // Move the body of the snake
+        if (direction == "right") headX++;
+        else if (direction == "left") headX--;
+        else if (direction == "up") headY--;
+        else if (direction == "down") headY++;
+
+        // Check if the snake has eaten the food
+        if (headX == food.x && headY == food.y) {
+            var tail = {
+                x: headX,
+                y: headY
+            };
+            score++;
+
+            // Create new food
+            createFood();
+        } else {
+            var tail = snake.pop();
+            tail.x = headX;
+            tail.y = headY;
+        }
+
+        // Check if the snake has hit the wall
+        if (headX < 0 || headY < 0 || headX >= canvas.width / snakeSize || headY >= canvas.height / snakeSize) {
+            init();
+            return;
+        }
+
+        // Check if the snake has bitten itself
+        for (var i = 0; i < snake.length; i++) {
+            if (snake[i].x == headX && snake[i].y == headY) {
+                init();
+                return;
+            }
+        }
+
+        snake.unshift(tail);
+    }
+
+    // Initialize the game
+    function init() {
+        direction = "right";
+        createSnake();
+        createFood();
+        score = 0;
+
+        if (typeof gameLoop != "undefined") clearInterval(gameLoop);
+        gameLoop = setInterval(paint, 80);
+    }
+
+    // Paint the game
+    function paint() {
+        draw();
+        moveSnake();
+    }
+
+    // Start the game
+    init();
+
+</script></p>
+</body>
+</html>

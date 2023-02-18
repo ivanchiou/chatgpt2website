@@ -1,0 +1,1 @@
+flask --app main run --reload --debugger --host 0.0.0.0 --port 8989

@@ -1,0 +1,14 @@
+<!doctype html>
+<title>Generated Images Path: {{ tree.name }}</title>
+<h1>{{ tree.name }}</h1>
+<ul>
+{%- for item in tree.children recursive %}
+    <li><a href="{{ item.href|e }}">{{ item.name }}</a>
+    {%- if item.editHref -%}    
+        &nbsp;<a href="{{ item.editHref|e }}">edit</a>
+    {%- endif %}
+    {%- if item.children -%}
+        <ul>{{ loop(item.children) }}</ul>
+    {%- endif %}</li>
+{%- endfor %}
+</ul>
