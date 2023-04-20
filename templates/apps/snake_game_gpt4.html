@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #222;
+            margin: 0;
+        }
+        canvas {
+            border: 1px solid #fff;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="game" width="400" height="400"></canvas>
+    <script>
+        const canvas = document.getElementById('game');
+        const ctx = canvas.getContext('2d');
+
+        const tileSize = 20;
+        const tileCount = canvas.width / tileSize;
+
+        let snakeSpeed = 7;
+        let headX = 10;
+        let headY = 10;
+        let xVelocity = 0;
+        let yVelocity = 0;
+        let tail = [];
+        let tailLength = 5;
+
+        let appleX = 15;
+        let appleY = 15;
+
+        function gameLoop() {
+            moveSnake();
+            checkCollision();
+            eatApple();
+            draw();
+
+            setTimeout(gameLoop, 1000 / snakeSpeed);
+        }
+
+        function moveSnake() {
+            headX += xVelocity;
+            headY += yVelocity;
+
+            if (headX < 0) headX = tileCount - 1;
+            if (headX > tileCount - 1) headX = 0;
+            if (headY < 0) headY = tileCount - 1;
+            if (headY > tileCount - 1) headY = 0;
+        }
+
+        function checkCollision() {
+            tail.forEach(segment => {
+                if (segment.x === headX && segment.y === headY) {
+                    tailLength = 5;
+                }
+            });
+        }
+
+        function eatApple() {
+            if (headX === appleX && headY === appleY) {
+                tailLength++;
+                appleX = Math.floor(Math.random() * tileCount);
+                appleY = Math.floor(Math.random() * tileCount);
+            }
+        }
+
+        function draw() {
+            ctx.fillStyle = '#222';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = 'lime';
+            tail.forEach(segment => {
+                ctx.fillRect(segment.x * tileSize, segment.y * tileSize, tileSize - 2, tileSize - 2);
+            });
+
+            tail.push({ x: headX, y: headY });
+            while (tail.length > tailLength) {
+                tail.shift();
+            }
+
+            ctx.fillStyle = 'red';
+            ctx.fillRect(appleX * tileSize, appleY * tileSize, tileSize - 2, tileSize - 2);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            switch (e.key) {
+                case 'ArrowUp':
+                    if (yVelocity === 0) {
+                        xVelocity = 0;
+                        yVelocity = -1;
+                    }
+                    break;
+                case 'ArrowDown':
+                    if (yVelocity === 0) {
+                        xVelocity = 0;
+                        yVelocity = 1;
+                    }
+                    break;
+                case 'ArrowLeft':
+                    if (xVelocity === 0) {
+                        xVelocity = -1;
+                        yVelocity = 0;
+                    }
+                    break;
+                case 'ArrowRight':
+                    if (xVelocity === 0) {
+                        xVelocity = 1;
+                        yVelocity = 0;
+                    }
+                    break;
+            }
+        });
+
+        gameLoop();
+    </script>
+</body>
+</html>

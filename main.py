@@ -41,7 +41,7 @@ def nocache(view):
 
 @app.route('/edit/<uuid>', methods=['GET', 'POST'])
 @nocache
-def index(uuid):
+def edit_app(uuid):
     form = PostForm()
     path =app_path+uuid+'.html'
     if os.path.isfile(path) is True:
@@ -83,11 +83,11 @@ def generate_img():
 def generate_app(uuid):
   print(uuid)
   if 'prompt' in session:
-    prompt = 'Tell me the whole code to create a good design website of ' + session['prompt']
+    prompt = 'Could you provide the whole code of ' + session['prompt'] + ' on web?'
     print(prompt)
   path =app_path+uuid+'.html'
   if os.path.isfile(path) is False:
-    response = generate_gpt3_response(prompt)
+    response = generate_gpt35_response(prompt, True)
     print(response)
     f = open(path, "w+")
     f.write(response)
@@ -125,6 +125,29 @@ def generate_gpt3_response(user_text, print_output=False):
     # Return the first choice's text
     return completions.choices[0].text
 
+def generate_gpt35_response(text, print_output=False):
+    """
+    Query OpenAI GPT-4 for the specific key and get back a response
+    :type text: str the user's text to query for
+    :type print_output: boolean whether or not to print the raw output JSON
+    """
+    completions = openai.ChatCompletion.create(
+        model='gpt-3.5-turbo',  # Determines the quality, speed, and cost.
+        messages=[
+            {"role": "system", "content": "You are professional developer on Javascript, html and css."},
+            {"role": "user", "content": text}
+        ],
+        n=2,
+        temperature=0.8
+    )
+
+    # Displaying the output can be helpful if things go wrong
+    if print_output:
+        print(completions)
+
+    # Return the first choice's text
+    return completions.choices[0].message.content
+
 @app.route("/images/list")
 @app.route('/images/list/<path:path>')
 def list_images(path='.'):
@@ -137,7 +160,8 @@ def list_apps(path='.'):
 
 def make_tree(base_url, path, remove_ext=False, editable=False):
     tree = dict(name=os.path.basename(path), children=[])
-    try: lst = os.listdir(path)
+    try: 
+        lst = os.listdir(path)
     except OSError:
         pass #ignore errors
     else:
