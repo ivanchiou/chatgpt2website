@@ -23,6 +23,5 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd ${{ secrets.TARGET_DIR }}
-            sudo su
-            git pull
-            pm2 restart prod_run
+            sudo git pull
+            sudo pm2 restart prod_run
