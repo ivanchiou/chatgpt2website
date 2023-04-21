@@ -25,4 +25,4 @@ jobs:
             cd ${{ secrets.TARGET_DIR }}
             sudo su
             git pull
-            pm2 restart prod_run/
+            pm2 restart prod_run
