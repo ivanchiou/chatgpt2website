@@ -87,7 +87,7 @@ def generate_app(uuid):
     print(prompt)
   path =app_path+uuid+'.html'
   if os.path.isfile(path) is False:
-    response = generate_gpt35_response(prompt, True)
+    response = generate_gpt3_response(prompt, False)
     print(response)
     f = open(path, "w+")
     f.write(response)
